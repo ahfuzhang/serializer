@@ -4,6 +4,7 @@ package serializer
 import (
 	"fmt"
 	"math"
+	"strconv"
 
 	"google.golang.org/protobuf/encoding/protowire"
 
@@ -41,58 +42,114 @@ func Encode(buf []byte, tag int, v interface{}) ([]byte, error) {
 		buf = setType(buf, tBool)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, protowire.EncodeBool(v1))
+	case *bool:
+		buf = setType(buf, tBool)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, protowire.EncodeBool(*v1))
 	case int8:
 		buf = setType(buf, tInt8)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, uint64(v1))
+	case *int8:
+		buf = setType(buf, tInt8)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, uint64(*v1))
 	case uint8:
 		buf = setType(buf, tUint8)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, uint64(v1))
+	case *uint8:
+		buf = setType(buf, tUint8)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, uint64(*v1))
 	case int16:
 		buf = setType(buf, tInt16)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, uint64(v1))
+	case *int16:
+		buf = setType(buf, tInt16)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, uint64(*v1))
 	case uint16:
 		buf = setType(buf, tUint16)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, uint64(v1))
+	case *uint16:
+		buf = setType(buf, tUint16)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, uint64(*v1))
 	case int32:
 		buf = setType(buf, tInt32)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, uint64(v1))
+	case *int32:
+		buf = setType(buf, tInt32)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, uint64(*v1))
 	case uint32:
 		buf = setType(buf, tUint32)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, uint64(v1))
+	case *uint32:
+		buf = setType(buf, tUint32)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, uint64(*v1))
 	case int64:
 		buf = setType(buf, tInt64)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, uint64(v1))
+	case *int64:
+		buf = setType(buf, tInt64)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, uint64(*v1))
 	case uint64:
 		buf = setType(buf, tUint64)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, v1)
+	case *uint64:
+		buf = setType(buf, tUint64)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, *v1)
 	case int:
 		buf = setType(buf, tInt)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
 		buf = protowire.AppendVarint(buf, uint64(v1))
+	case *int:
+		buf = setType(buf, tInt)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.VarintType)
+		buf = protowire.AppendVarint(buf, uint64(*v1))
 	case float32:
 		buf = setType(buf, tFloat32)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.Fixed32Type)
 		buf = protowire.AppendFixed32(buf, math.Float32bits(v1))
+	case *float32:
+		buf = setType(buf, tFloat32)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.Fixed32Type)
+		buf = protowire.AppendFixed32(buf, math.Float32bits(*v1))
 	case float64:
 		buf = setType(buf, tFloat64)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.Fixed64Type)
 		buf = protowire.AppendFixed64(buf, math.Float64bits(v1))
+	case *float64:
+		buf = setType(buf, tFloat64)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.Fixed64Type)
+		buf = protowire.AppendFixed64(buf, math.Float64bits(*v1))
 	case string:
 		buf = setType(buf, tString)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.BytesType)
 		buf = protowire.AppendString(buf, v1)
+	case *string:
+		buf = setType(buf, tString)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.BytesType)
+		buf = protowire.AppendString(buf, *v1)
 	case []byte:
 		buf = setType(buf, tBytes)
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.BytesType)
 		buf = protowire.AppendBytes(buf, v1)
+	case *[]byte:
+		buf = setType(buf, tBytes)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.BytesType)
+		buf = protowire.AppendBytes(buf, *v1)
 	case []interface{}:
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.StartGroupType)
 		var err error
@@ -237,6 +294,42 @@ func ReadArray(buf []byte) (arrayData []byte, headLen int, leftData []byte, tag 
 	return
 }
 
+// RowCallback func type to read rows
+type RowCallback func(tag int, cols ...interface{}) error
+
+// ReadEachRow read rows, send data to callback func
+func ReadEachRow(buf []byte, callback RowCallback) error {
+	arrayData, headLen, leftData, tag, err := ReadArray(buf)
+	if err != nil {
+		return debugs.WarpError(err, "ReadArray error")
+	}
+	arrayData = arrayData[headLen:]
+	for len(arrayData) > 2 {
+		arrayData, _, leftData, tag, err = ReadArray(arrayData)
+		if err != nil {
+			return debugs.WarpError(err, "ReadArray read row error")
+		}
+		var values interface{}
+		_, values, err = Decode(arrayData)
+		if err != nil {
+			return debugs.WarpError(err, "Decode row error")
+		}
+		arrayData = leftData
+		//
+		cols, ok := values.([]interface{})
+		if !ok {
+			if err = callback(tag, values); err != nil {
+				return debugs.WarpError(err, "callback with one value error")
+			}
+		} else {
+			if err = callback(tag, cols...); err != nil {
+				return debugs.WarpError(err, "callback with multi value error")
+			}
+		}
+	}
+	return nil
+}
+
 func setType(buf []byte, t uint64) []byte {
 	buf = protowire.AppendTag(buf, protowire.Number(tagOfDataType), protowire.VarintType)
 	buf = protowire.AppendVarint(buf, t)
@@ -279,5 +372,39 @@ func uint64ToInterfaceType(v uint64, golangType uint64) (interface{}, error) {
 		return math.Float64frombits(v), nil
 	default:
 		return nil, fmt.Errorf("[%s]not a number type, %d", debugs.SourceCodeLoc(1), golangType)
+	}
+}
+
+// BasicTypeToString format a basic type to string
+func BasicTypeToString(v interface{}) (string, error) {
+	switch r := v.(type) {
+	case bool:
+		return strconv.FormatBool(r), nil
+	case int8:
+		return strconv.FormatInt(int64(r), 10), nil
+	case uint8:
+		return strconv.FormatUint(uint64(r), 10), nil
+	case int16:
+		return strconv.FormatInt(int64(r), 10), nil
+	case uint16:
+		return strconv.FormatUint(uint64(r), 10), nil
+	case int32:
+		return strconv.FormatInt(int64(r), 10), nil
+	case uint32:
+		return strconv.FormatUint(uint64(r), 10), nil
+	case int64:
+		return strconv.FormatInt(r, 10), nil
+	case uint64:
+		return strconv.FormatUint(r, 10), nil
+	case int:
+		return strconv.FormatInt(int64(r), 10), nil
+	case float32:
+		return fmt.Sprintf("%f", r), nil
+	case float64:
+		return fmt.Sprintf("%f", r), nil
+	case string:
+		return r, nil
+	default:
+		return "", fmt.Errorf("[%s]not support type %T", debugs.SourceCodeLoc(1), v)
 	}
 }
