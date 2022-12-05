@@ -32,7 +32,7 @@ Those golang data:
 		},
 	}
 ```
-will encoded as:
+will encode as:
 ```
 0b 0b 78 03 08 01 78 02 10 02 78 05 18 03 78 04  |   x   x   x   x 
 20 04 78 07 28 05 78 06 30 06 78 09 38 07 78 08  |   x ( x 0 x 8 x 
