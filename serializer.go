@@ -2,6 +2,8 @@
 package serializer
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"math"
 	"strconv"
@@ -33,6 +35,7 @@ const (
 	tFloat64
 	tString
 	tBytes
+	tJSON
 )
 
 // Encode encode []interface{} to binary
@@ -161,8 +164,15 @@ func Encode(buf []byte, tag int, v interface{}) ([]byte, error) {
 		}
 		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.EndGroupType)
 	default:
-		return buf, fmt.Errorf("[%s]not support datatype, %T, value=%+v",
-			debugs.SourceCodeLoc(1), v, v)
+		// try to use json encode
+		temp, err := json.Marshal(v)
+		if err != nil {
+			return buf, fmt.Errorf("[%s]not support datatype(and can not encode to JSON), %T, value=%+v",
+				debugs.SourceCodeLoc(1), v, v)
+		}
+		buf = setType(buf, tJSON)
+		buf = protowire.AppendTag(buf, protowire.Number(tag), protowire.BytesType)
+		buf = protowire.AppendBytes(buf, temp)
 	}
 	return buf, nil
 }
@@ -239,6 +249,19 @@ func Decode(buf []byte) ([]byte, interface{}, error) {
 			}
 			buf = buf[dataLen:]
 			return buf, value, nil
+		case tJSON:
+			value, dataLen := protowire.ConsumeBytes(buf)
+			if dataLen < 0 {
+				return buf, nil, fmt.Errorf("[%s]read BytesType error,code=%d", debugs.SourceCodeLoc(1), dataLen)
+			}
+			buf = buf[dataLen:]
+			decoder := json.NewDecoder(bytes.NewBuffer(value))
+			decoder.UseNumber()
+			var out interface{}
+			if err := decoder.Decode(&out); err != nil {
+				return buf, nil, fmt.Errorf("[%s]decode json error,err=%s", debugs.SourceCodeLoc(1), err.Error())
+			}
+			return buf, out, nil
 		default:
 			return buf, nil, fmt.Errorf("[%s]read BytesType error,golangType=%d", debugs.SourceCodeLoc(1), golangType)
 		}

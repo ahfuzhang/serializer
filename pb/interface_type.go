@@ -69,51 +69,13 @@ func (t *InterfaceType) Unmarshal(data []byte) error {
 	return nil
 }
 
-func estimateSize(v interface{}, s int) int {
-	switch v1 := v.(type) {
-	case bool, int8, uint8, *bool, *int8, *uint8:
-		return s + 3
-	case int16, uint16, *int16, *uint16:
-		return s + 5
-	case int32, uint32, *int32, *uint32:
-		return s + 2 + 4
-	case int64, uint64, int, *int64, *uint64, *int:
-		return s + 2 + 8
-	case float32, *float32:
-		return s + 2 + 4
-	case float64, *float64:
-		return s + 2 + 8
-	case string:
-		return s + 2 + 2 + len(v1)
-	case *string:
-		return s + 2 + 2 + len(*v1)
-	case []byte:
-		return s + 2 + 2 + len(v1)
-	case *[]byte:
-		return s + 2 + 2 + len(*v1)
-	case []interface{}:
-		for _, item := range v1 {
-			s += estimateSize(item, s)
-		}
-		return s + 4
-	case *[]interface{}:
-		for _, item := range *v1 {
-			s += estimateSize(item, s)
-		}
-		return s + 4
-	default:
-		panic(fmt.Sprintf("unknown data type %T, value=%+v", v1, v1))
-	}
-}
-
 func (t *InterfaceType) Size() int {
 	buf, err := t.Marshal()
 	if err != nil {
-		return -1
+		return 0
 	}
 	t.temp = buf // todo: ugly
 	return len(buf)
-	// return estimateSize(t.Value, 0)
 }
 
 func (t InterfaceType) MarshalJSON() ([]byte, error) {
